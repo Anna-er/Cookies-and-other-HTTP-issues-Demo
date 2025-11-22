@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body { font-family: Arial; background:#def; text-align:center; padding-top:120px; }
+        .card { background:white; padding:20px; border-radius:10px; display:inline-block; }
+        input { padding:8px; margin:5px; }
+        button { padding:10px 20px; margin-top:10px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Вход в банк</h1>
+
+    <form action="/login" method="POST">
+        <input name="user" placeholder="Логин"><br>
+        <input name="pass" placeholder="Пароль" type="password"><br>
+        <button type="submit">Войти</button>
+    </form>
+</div>
+
+</body>
+</html>
