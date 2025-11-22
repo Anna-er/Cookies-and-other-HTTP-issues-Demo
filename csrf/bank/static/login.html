@@ -3,24 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <style>
-        body { font-family: Arial; background:#def; text-align:center; padding-top:120px; }
-        .card { background:white; padding:20px; border-radius:10px; display:inline-block; }
-        input { padding:8px; margin:5px; }
-        button { padding:10px 20px; margin-top:10px; }
-    </style>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
 <div class="card">
     <h1>Вход в банк</h1>
 
-    <form action="/login" method="POST">
-        <input name="user" placeholder="Логин"><br>
-        <input name="pass" placeholder="Пароль" type="password"><br>
+    <!-- ПЛАШКА ОШИБКИ -->
+    <div id="errorBox" class="error" style="display:none;">
+        ❌ Неверный логин или пароль
+    </div>
+
+    <img src="/static/demara.png" width="250">
+
+    <form id="loginForm" action="/login" method="POST">
+        <input id="user" name="user" placeholder="Логин"><br>
+        <input id="pass" name="pass" placeholder="Пароль" type="password"><br>
         <button type="submit">Войти</button>
     </form>
 </div>
+
+<script>
+    if (location.search.includes("error=1")) {
+        document.getElementById("errorBox").style.display = "block";
+        document.getElementById("user").value = "";
+        document.getElementById("pass").value = "";
+    }
+</script>
 
 </body>
 </html>

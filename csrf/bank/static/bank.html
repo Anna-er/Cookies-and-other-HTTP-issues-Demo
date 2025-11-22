@@ -3,29 +3,29 @@
 <head>
     <meta charset="UTF-8" />
     <title>Bank</title>
-    <style>
-        body { font-family: Arial; background:#c5e7ff; text-align:center; padding-top:50px; }
-        .card { background:white; padding:20px; border-radius:12px; display:inline-block; }
-        .block { background:#fff3b0; padding:10px; margin-top:20px; border-radius:8px; white-space:pre-line; font-family:monospace; }
-    </style>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
 <div class="card">
     <h1>Личный кабинет</h1>
 
-    <img src="/static/image_bank.jpeg" width="250">
+    <div class="gold-frame">
+        <div class="gif-frame">
+            <img src="/static/de.gif" width="250">
+        </div>
+    </div>
 
     <div class="block" id="balance">Загрузка...</div>
     <div class="block" id="history">Загрузка истории...</div>
 </div>
 
 <script>
-    fetch("/balance").then(r => r.text())
-        .then(t => document.getElementById("balance").textContent = t);
+fetch("/balance").then(r => r.text())
+    .then(t => document.getElementById("balance").textContent = t);
 
-    fetch("/history").then(r => r.text())
-        .then(t => document.getElementById("history").textContent = t);
+fetch("/history").then(r => r.text())
+    .then(t => document.getElementById("history").textContent = t);
 </script>
 
 </body>

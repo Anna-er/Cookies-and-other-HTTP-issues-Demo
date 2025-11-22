@@ -1,0 +1,100 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #ffc5e8;
+    text-align: center;
+    padding-top: 60px;
+}
+
+.card {
+    background: rgb(238, 255, 225);
+    padding: 20px;
+    border-radius: 12px;
+    display: inline-block;
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+}
+
+.block {
+    background: #ffe135;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 8px;
+    white-space: pre-line;
+    font-family: monospace;
+}
+
+.gold-frame {
+    padding: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,
+        #909055 0%,
+        #d8d855 25%,
+        #fcfc55 50%,
+        #ffd700 75%,
+        #6c4855 100%
+    );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    aspect-ratio: 1/1;
+    width: calc(250px + 6px*2 + 8px*2);
+}
+
+
+.gif-frame {
+    padding: 2px;
+    border-radius: 50%;
+    background: radial-gradient(circle,#000000 0%, #484855 80%, #eeffe1 100%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    aspect-ratio: 1/1;
+    width: calc(250px + 2px*2);
+}
+
+.gif-frame img {
+    border-radius: 50%;
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+}
+
+input {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+}
+
+button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    background: #ffd500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+button:hover {
+    background: #ffcb00;
+}
+
+.error {
+    background: #ffb3b3;
+    border: 2px solid #ff4d4d;
+    color: #700;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* мягкое появление */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+

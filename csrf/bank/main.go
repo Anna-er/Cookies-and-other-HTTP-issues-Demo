@@ -12,28 +12,23 @@ import (
 var (
     mu sync.Mutex
 
-    // пользователи: username -> password
     passwords = map[string]string{
         "victim":   "123",
         "attacker": "123",
     }
 
-    // балансы
     balances = map[string]int{
         "victim":   1500,
         "attacker": 0,
     }
 
-    // история операций: username -> []operations
     history = map[string][]string{
         "victim":   {"История операций:"},
         "attacker": {"История операций:"},
     }
 
-    // sessionID -> username
     sessions = map[string]string{}
 )
-
 
 func newSession() string {
     buf := make([]byte, 16)
@@ -55,51 +50,66 @@ func currentUser(r *http.Request) (string, bool) {
     return user, true
 }
 
+func loginHandler(w http.ResponseWriter, r *http.Request) {
 
-func loginPage(w http.ResponseWriter, r *http.Request) {
-    // Проверяем, есть ли активная сессия
-    if _, ok := currentUser(r); ok {
+    // ========== GET — показать страницу логина ==========
+    if r.Method == http.MethodGet {
+        if _, ok := currentUser(r); ok {
+            http.Redirect(w, r, "/bank", http.StatusFound)
+            return
+        }
+
+        page, _ := os.ReadFile("static/login.html")
+
+        // если есть ?error=1 — вставим маленький JS для показа красной плашки
+        if r.URL.Query().Get("error") == "1" {
+            page = append(page, []byte(`
+                <script>
+                    setTimeout(() => {
+                        alert("Неверный логин или пароль");
+                    }, 100);
+                </script>
+            `)...)
+        }
+
+        w.Header().Set("Content-Type", "text/html; charset=utf-8")
+        w.Write(page)
+        return
+    }
+
+    // ========== POST — логин ==========
+    if r.Method == http.MethodPost {
+        user := r.FormValue("user")
+        pass := r.FormValue("pass")
+
+        mu.Lock()
+        correctPass := passwords[user]
+        mu.Unlock()
+
+        if correctPass == "" || pass != correctPass {
+            http.Redirect(w, r, "/login?error=1", http.StatusSeeOther)
+            return
+        }
+
+        sid := newSession()
+        mu.Lock()
+        sessions[sid] = user
+        mu.Unlock()
+
+        http.SetCookie(w, &http.Cookie{
+            Name:  "sessionid",
+            Value: sid,
+            Path:  "/",
+        })
+
         http.Redirect(w, r, "/bank", http.StatusFound)
-        return
     }
-
-    // Если сессии нет — показываем форму входа
-    page, _ := os.ReadFile("static/login.html")
-    w.Header().Set("Content-Type", "text/html; charset=utf-8")
-    w.Write(page)
-}
-
-func login(w http.ResponseWriter, r *http.Request) {
-    user := r.FormValue("user")
-    pass := r.FormValue("pass")
-
-    mu.Lock()
-    correctPass := passwords[user]
-    mu.Unlock()
-
-    if correctPass == "" || pass != correctPass {
-        http.Error(w, "Неверный логин или пароль", http.StatusUnauthorized)
-        return
-    }
-
-    sid := newSession()
-    mu.Lock()
-    sessions[sid] = user
-    mu.Unlock()
-
-    http.SetCookie(w, &http.Cookie{
-        Name:  "sessionid",
-        Value: sid,
-        Path:  "/",
-    })
-
-    http.Redirect(w, r, "/bank", http.StatusFound)
 }
 
 func bankPage(w http.ResponseWriter, r *http.Request) {
     _, ok := currentUser(r)
     if !ok {
-        http.Redirect(w, r, "/", http.StatusFound)
+        http.Redirect(w, r, "/login", http.StatusFound)
         return
     }
 
@@ -107,7 +117,6 @@ func bankPage(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "text/html; charset=utf-8")
     w.Write(page)
 }
-
 
 func balanceAPI(w http.ResponseWriter, r *http.Request) {
     user, ok := currentUser(r)
@@ -141,7 +150,6 @@ func historyAPI(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte(out))
 }
 
-// нет CSRF-защиты
 func transferAPI(w http.ResponseWriter, r *http.Request) {
     user, ok := currentUser(r)
     if !ok {
@@ -181,11 +189,13 @@ func transferAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-
     http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-    http.HandleFunc("/", loginPage)
-    http.HandleFunc("/login", login)
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        http.Redirect(w, r, "/login", http.StatusFound)
+    })
+
+    http.HandleFunc("/login", loginHandler)
     http.HandleFunc("/bank", bankPage)
 
     http.HandleFunc("/balance", balanceAPI)
