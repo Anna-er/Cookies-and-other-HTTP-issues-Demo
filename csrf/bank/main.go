@@ -158,7 +158,28 @@ func transferAPI(w http.ResponseWriter, r *http.Request) {
     }
 
     to := r.URL.Query().Get("to")
-    sum := 1000
+    if to == "" {
+        http.Error(w, "Ошибка: не указан получатель (to)", http.StatusBadRequest)
+        return
+    }
+
+    // Защита: запрет перевода самому себе
+    if to == user {
+        http.Error(w, "Ошибка: перевод самому себе запрещён", http.StatusBadRequest)
+        mu.Lock()
+        history[user] = append(history[user], "Ошибка: попытка перевода самому себе")
+        mu.Unlock()
+        return
+    }
+
+    // читаем сумму, если передана, иначе 0
+    sum := 0
+    if s := r.URL.Query().Get("amount"); s != "" {
+        if _, err := fmt.Sscanf(s, "%d", &sum); err != nil || sum <= 0 {
+            http.Error(w, "Ошибка: неверная сумма", http.StatusBadRequest)
+            return
+        }
+    }
 
     mu.Lock()
     defer mu.Unlock()

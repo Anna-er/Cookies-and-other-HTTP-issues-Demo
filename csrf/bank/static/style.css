@@ -5,13 +5,22 @@ body {
     padding-top: 60px;
 }
 
+.cards-row {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
 .card {
+    width: 420px;
     background: #bcd679;
     padding: 20px;
     border-radius: 12px;
     display: inline-block;
     box-shadow: 0 0 8px rgba(0,0,0,0.2);
 }
+
 
 .block {
     background: #f7ea46;
@@ -20,6 +29,14 @@ body {
     border-radius: 8px;
     white-space: pre-line;
     font-family: monospace;
+}
+
+.panel {
+    background: #fffbe6;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 12px;
+    border: 2px solid #ffe28a;
 }
 
 .gold-frame {
@@ -32,25 +49,20 @@ body {
         #ffd700 75%,
         #6c4855 100%
     );
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     aspect-ratio: 1/1;
     width: calc(350px + 6px*2 + 8px*2);
 }
-
 
 .gif-frame {
     padding: 2px;
     border-radius: 50%;
     background: radial-gradient(circle,#000000 0%, #484855 80%, #bcd679 100%);
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     aspect-ratio: 1/1;
     width: calc(350px + 2px*2);
 }
@@ -72,13 +84,13 @@ input {
 button {
     padding: 10px 20px;
     margin-top: 10px;
-    background: #f7ea46;
+    background: #c3d02f;
     border: none;
     border-radius: 8px;
     cursor: pointer;
 }
 button:hover {
-    background: #f7ea46;
+    background: #fff062;
 }
 
 .error {
@@ -92,9 +104,7 @@ button:hover {
     animation: fadeIn 0.5s ease-out;
 }
 
-/* мягкое появление */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-

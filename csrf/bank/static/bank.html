@@ -6,26 +6,136 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-
+<div class="cards-row">
 <div class="card">
     <h1>Личный кабинет</h1>
 
-    <div class="gold-frame">
+    <div class="gold-frame" id="goldWrap">
         <div class="gif-frame">
-            <img src="/static/de.gif" width="350">
+            <img src="/static/de.gif" width="350" alt="avatar">
         </div>
     </div>
 
-    <div class="block" id="balance">Загрузка...</div>
-    <div class="block" id="history">Загрузка истории...</div>
+    <!-- Информационная панель -->
+    <div style="margin-top:18px; text-align:left; max-width:420px;">
+
+        <!-- Баланс -->
+        <div class="block" id="balance">Загрузка...</div>
+
+        <!-- История -->
+        <div class="block" id="history" style="margin-top:12px;">Загрузка истории...</div>
+
+    </div>
+</div>
+<div class="card">
+    <div class="panel">
+
+         <!-- Форма перевода -->
+        <div class="block" style="margin-top:0;">
+            <h3 style="margin:0 0 8px 0;">Быстрый перевод</h3>
+            <input id="toInput" placeholder="Кому (логин)" />
+            <input id="amountInput" placeholder="Сумма (₽)" value="1000" />
+            <br>
+            <button id="sendBtn">Перевести</button>
+
+            <div id="transferResult"
+                 style="margin-top:8px; display:none; padding:8px; border-radius:6px;">
+            </div>
+        </div>
+
+            <!-- Кнопки -->
+        <div style="margin-top:12px; text-align:center;">
+            <button id="refreshBtn">Обновить</button>
+            <button id="logoutBtn" style="background:#ffb3b3; margin-left:8px;">Выйти</button>
+        </div>
+        <!-- <img style="margin:20px 10px 10px 0;" src="/static/nicole.gif" width="150" alt="avatar"> -->
+         <img style="margin:0px 10px 10px 0;" src="/static/piggy-bank.gif" width="250" alt="avatar">
+    </div>
+</div>
 </div>
 
 <script>
-fetch("/balance").then(r => r.text())
-    .then(t => document.getElementById("balance").textContent = t);
+async function fetchText(url) {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.text();
+}
 
-fetch("/history").then(r => r.text())
-    .then(t => document.getElementById("history").textContent = t);
+async function loadBalance() {
+    try {
+        const t = await fetchText('/balance');
+        document.getElementById('balance').textContent = t;
+    } catch (e) {
+        document.getElementById('balance').textContent = 'Ошибка загрузки баланса';
+    }
+}
+
+async function loadHistory() {
+    try {
+        const t = await fetchText('/history');
+        document.getElementById('history').textContent = t;
+    } catch (e) {
+        document.getElementById('history').textContent = 'Ошибка загрузки истории';
+    }
+}
+
+document.getElementById('refreshBtn').addEventListener('click', () => {
+    loadBalance();
+    loadHistory();
+    hideTransferResult();
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    document.cookie = "sessionid=; Max-Age=0; path=/";
+    location = '/login';
+});
+
+function showTransferResult(msg, ok) {
+    const el = document.getElementById('transferResult');
+    el.style.display = 'block';
+    el.textContent = msg;
+    el.style.background = ok ? '#d4ffd4' : '#ffd6d6';
+    el.style.border = ok ? '1px solid #2d9a2d' : '1px solid #d94d4d';
+}
+
+function hideTransferResult() {
+    const el = document.getElementById('transferResult');
+    el.style.display = 'none';
+    el.textContent = '';
+}
+
+document.getElementById('sendBtn').addEventListener('click', async () => {
+    hideTransferResult();
+    const to = document.getElementById('toInput').value.trim();
+    const amountRaw = document.getElementById('amountInput').value.trim();
+    if (!to) return showTransferResult('Укажите получателя', false);
+    const amount = parseInt(amountRaw, 10);
+    if (!amount || amount <= 0) return showTransferResult('Укажите корректную сумму', false);
+
+    const balText = document.getElementById('balance').textContent;
+    const match = balText.match(/Баланс \(([^)]+)\):/i);
+    if (match) {
+        const me = match[1];
+        if (me === to) return showTransferResult('Ошибка: перевод самому себе запрещён', false);
+    }
+
+    try {
+        const resp = await fetch('/transfer?to=' + encodeURIComponent(to) + '&amount=' + encodeURIComponent(amount));
+        const text = await resp.text();
+        if (!resp.ok) {
+            showTransferResult(text || ('Ошибка: ' + resp.status), false);
+        } else {
+            showTransferResult(text, true);
+            loadBalance();
+            loadHistory();
+        }
+    } catch (e) {
+        showTransferResult('Сеть: ' + e.message, false);
+    }
+});
+
+loadBalance();
+loadHistory();
 </script>
 
 </body>
