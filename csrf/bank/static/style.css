@@ -1,12 +1,12 @@
 body {
     font-family: Arial, sans-serif;
-    background: #ffc5e8;
+    background: #fddbd7;
     text-align: center;
     padding-top: 60px;
 }
 
 .card {
-    background: rgb(238, 255, 225);
+    background: #bcd679;
     padding: 20px;
     border-radius: 12px;
     display: inline-block;
@@ -14,7 +14,7 @@ body {
 }
 
 .block {
-    background: #ffe135;
+    background: #f7ea46;
     padding: 10px;
     margin-top: 20px;
     border-radius: 8px;
@@ -38,27 +38,27 @@ body {
     justify-content: center;
 
     aspect-ratio: 1/1;
-    width: calc(250px + 6px*2 + 8px*2);
+    width: calc(350px + 6px*2 + 8px*2);
 }
 
 
 .gif-frame {
     padding: 2px;
     border-radius: 50%;
-    background: radial-gradient(circle,#000000 0%, #484855 80%, #eeffe1 100%);
+    background: radial-gradient(circle,#000000 0%, #484855 80%, #bcd679 100%);
 
     display: flex;
     align-items: center;
     justify-content: center;
 
     aspect-ratio: 1/1;
-    width: calc(250px + 2px*2);
+    width: calc(350px + 2px*2);
 }
 
 .gif-frame img {
     border-radius: 50%;
-    width: 250px;
-    height: 250px;
+    width: 350px;
+    height: 350px;
     object-fit: cover;
 }
 
@@ -72,13 +72,13 @@ input {
 button {
     padding: 10px 20px;
     margin-top: 10px;
-    background: #ffd500;
+    background: #f7ea46;
     border: none;
     border-radius: 8px;
     cursor: pointer;
 }
 button:hover {
-    background: #ffcb00;
+    background: #f7ea46;
 }
 
 .error {

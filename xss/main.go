@@ -17,7 +17,6 @@ func main() {
 	http.HandleFunc("/", formHandler)
 	http.HandleFunc("/steal", stealHandler)
 
-	// Отдача картинок / статики
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	fmt.Println("XSS demo running on http://localhost:8081 …")
