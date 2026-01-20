@@ -151,7 +151,7 @@ MITM demo running on http://localhost:8080 …
 
 ---
 
-## Ловля в Wireshark
+## Wireshark
 
 ### Фильтры
 
@@ -166,7 +166,7 @@ MITM demo running on http://localhost:8080 …
   http.request.method == "GET" || http.request.method == "POST"
   ```
 
-### Что демонстрировать
+### Что демонстрируется
 
 * Для MITM — перехват cookie в чистом виде.
 * Для CSRF — невидимый запрос из сторонней страницы.

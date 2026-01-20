@@ -52,7 +52,6 @@ func currentUser(r *http.Request) (string, bool) {
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 
-    // ========== GET — показать страницу логина ==========
     if r.Method == http.MethodGet {
         if _, ok := currentUser(r); ok {
             http.Redirect(w, r, "/bank", http.StatusFound)
@@ -61,7 +60,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
         page, _ := os.ReadFile("static/login.html")
 
-        // если есть ?error=1 — вставим маленький JS для показа красной плашки
         if r.URL.Query().Get("error") == "1" {
             page = append(page, []byte(`
                 <script>
@@ -77,7 +75,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // ========== POST — логин ==========
     if r.Method == http.MethodPost {
         user := r.FormValue("user")
         pass := r.FormValue("pass")
@@ -163,7 +160,6 @@ func transferAPI(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Защита: запрет перевода самому себе
     if to == user {
         http.Error(w, "Ошибка: перевод самому себе запрещён", http.StatusBadRequest)
         mu.Lock()
@@ -172,7 +168,6 @@ func transferAPI(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // читаем сумму, если передана, иначе 0
     sum := 0
     if s := r.URL.Query().Get("amount"); s != "" {
         if _, err := fmt.Sscanf(s, "%d", &sum); err != nil || sum <= 0 {

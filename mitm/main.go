@@ -7,7 +7,6 @@ import (
 	"net/http"
 )
 
-// Генерирует случайный 16-байтовый ID → 32 hex-символа
 func generateSessionID() string {
 	b := make([]byte, 16)
 	_, err := rand.Read(b)
@@ -42,5 +41,5 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	fmt.Println("MITM demo running on http://0.0.0.0:8080 …")
-	http.ListenAndServe(":8080", nil) // HTTP, on purpose
+	http.ListenAndServe(":8080", nil)
 }

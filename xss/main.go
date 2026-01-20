@@ -24,7 +24,7 @@ func main() {
 }
 
 func formHandler(w http.ResponseWriter, r *http.Request) {
-	// Уязвимость: НЕ экранируем HTML
+
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		mu.Lock()
@@ -32,14 +32,12 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
 		mu.Unlock()
 	}
 
-	// Ставим cookie без HttpOnly, чтобы XSS видел её
 	http.SetCookie(w, &http.Cookie{
 		Name:  "sessionid",
 		Value: "XSS_SECRET_456",
 		Path:  "/",
 	})
 
-	// Загружаем HTML-файл
 	html, err := os.ReadFile("static/index.html")
 	if err != nil {
 		http.Error(w, "index.html not found", 500)
@@ -47,7 +45,6 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	page := string(html)
 
-	// Формируем HTML блок комментариев (уязвимый!)
 	mu.Lock()
 	var list strings.Builder
 	for _, c := range comments {
@@ -55,7 +52,6 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	mu.Unlock()
 
-	// Заменяем {{COMMENTS}} в HTML
 	page = strings.Replace(page, "{{COMMENTS}}", list.String(), 1)
 
 	w.Header().Set("Content-Type", "text/html")

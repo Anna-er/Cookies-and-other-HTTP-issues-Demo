@@ -1,4 +1,3 @@
-// Тревожное мигание заголовка
 (function(){
   const titles = [
     "⚠️ VIRUS DETECTED",
@@ -10,7 +9,7 @@
   setInterval(()=> { document.title = titles[i % titles.length]; i++; }, 500);
 })();
 
-// Дрожание стикеров
+
 (function(){
   const s1 = document.querySelector('.st1');
   const s2 = document.querySelector('.st2');
